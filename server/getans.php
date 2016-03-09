@@ -4,7 +4,7 @@ $mysql_server = '127.0.0.1'; //MYSQL服务器IP
 $mysql_username = 'root'; //MYSQL用户名
 $mysql_password = '123654'; //MYSQL密码
 $mysql_dbname = 'CQU_SportExam'; //MYSQL数据库名
-$conn = mysql_connect($mysql_server,$mysql_username,$mysql_dbname); //连接数据库
+$conn = mysql_connect($mysql_server,$mysql_username,$mysql_password); //连接数据库
 if(!$conn) //连接失败
 {
 	die('Error:' . mysql_error());
