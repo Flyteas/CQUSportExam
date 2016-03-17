@@ -17,7 +17,7 @@ $result = mysql_query($sqlstr);                //得到查询结果数据集
 while($row = mysql_fetch_array($result) )
 {
     echo $row['content']."<br/>";
-    echo $row['type']."<br/>";
+  /*  echo $row['type']."<br/>";
 	if(!empty($row['option1']))
 	{
 		echo $row['option1']."<br/>";
@@ -41,7 +41,7 @@ while($row = mysql_fetch_array($result) )
 	if(!empty($row['option6']))
 	{
 		echo $row['option6']."<br/>";
-	}
+	}*/
 	echo $row['answer']."<br/><br/>";
 }
 mysql_close($conn);
