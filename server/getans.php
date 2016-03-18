@@ -10,7 +10,7 @@ if(!$conn) //连接失败
 	die('Error:' . mysql_error());
 }
 mysql_select_db($mysql_dbname, $conn);
-mysql_query("set character set 'gbk'");   //设置字符集编码格式
+//mysql_query("set character set 'gbk'");   //设置字符集编码格式
 $sqlstr = "SELECT * FROM subject where content like '$content_keyword'";
 $result = mysql_query($sqlstr);                //得到查询结果数据集
 //循环从数据集取出数据
