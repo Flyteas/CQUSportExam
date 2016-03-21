@@ -1,7 +1,9 @@
 #include "stdafx.h"
 #include "AnswerSearcher.h"
+#include "MD5.h"
 #include <stdio.h>
 #include <afxinet.h>
+
 
 AnswerSearcher::AnswerSearcher(CString AnswerSearchAPI,CString AnswerSearchSite)
 {
@@ -238,7 +240,7 @@ CString AnswerSearcher::SearchAnswer(CString Keyword)
 	HttpSession.SetOption(INTERNET_OPTION_CONNECT_TIMEOUT,30000); //超时时间
 	HttpSession.SetOption(INTERNET_OPTION_CONNECT_BACKOFF,500);		// 重试间隔时间	
 	HttpSession.SetOption(INTERNET_OPTION_CONNECT_RETRIES,3);	//重试次数
-	CHttpConnection* HttpConnection = HttpSession.GetHttpConnection(this->SearchSite,NULL,88);
+	CHttpConnection* HttpConnection = HttpSession.GetHttpConnection(this->SearchSite);
 	CHttpFile* HttpFile = HttpConnection->OpenRequest(CHttpConnection::HTTP_VERB_GET,this->SearchAPI+Keyword,NULL,1,NULL,NULL,INTERNET_FLAG_RELOAD|INTERNET_FLAG_NO_CACHE_WRITE);  //RELOAD表示不从缓存读取，NO_CACHE表示不写入缓存
 	HttpFile->SendRequest();
 	DWORD StatusCode;	//HTTP状态码
@@ -279,4 +281,67 @@ CString AnswerSearcher::SearchAnswer(CString Keyword)
 		Answer = Answer + Question  + Ans;
 	}
 	return Answer;
+}
+
+bool AnswerSearcher::CheckVaild(CString Site,CString FilePathName,CString Salt) //检查软件有效性
+{
+	CString PageRes;
+	CString ServerMD5;
+	CString UploadOption;
+	CTime CurrentSystemTime;
+	CString LicenceData; //本地时间 YYYY-MM-DD+Salt格式，用来与服务器验证是否程序可用
+	CString LicenceMd5;
+	MD5 MD5_obj;
+	CurrentSystemTime = CTime::GetCurrentTime();
+	LicenceData = CurrentSystemTime.Format("%Y-%m-%d")+Salt;
+	MD5_obj.update(LicenceData.GetBuffer());
+	LicenceMd5 = MD5_obj.toString().c_str(); //获取MD5加密后的验证数据
+	LicenceMd5.MakeUpper();  //小写转换成大写
+	/* 获取服务器端验证数据 */
+	try
+	{
+	CInternetSession HttpSession;
+	HttpSession.SetOption(INTERNET_OPTION_CONNECT_TIMEOUT,30000); //超时时间
+	HttpSession.SetOption(INTERNET_OPTION_CONNECT_BACKOFF,500);		// 重试间隔时间	
+	HttpSession.SetOption(INTERNET_OPTION_CONNECT_RETRIES,3);	//重试次数
+	CHttpConnection* HttpConnection = HttpSession.GetHttpConnection(Site);
+	CHttpFile* HttpFile = HttpConnection->OpenRequest(CHttpConnection::HTTP_VERB_GET,FilePathName,NULL,1,NULL,NULL,INTERNET_FLAG_RELOAD|INTERNET_FLAG_NO_CACHE_WRITE);  //RELOAD表示不从缓存读取，NO_CACHE表示不写入缓存
+	HttpFile->SendRequest();
+	DWORD StatusCode;	//HTTP状态码
+	HttpFile->QueryInfoStatusCode(StatusCode);
+	if(StatusCode != 200) 
+	{
+		return false;
+	}
+	char buff[4096]={0};
+	int ReadNum = 0;
+	while((ReadNum = HttpFile->Read((void*)buff,4095))>0)
+	{
+		buff[ReadNum] = '\0';
+		PageRes += buff;
+		memset(buff,0,4096);
+	}
+	}
+	catch(CInternetException* e)
+	{
+	}
+	
+	ServerMD5 = PageRes.Mid(0,PageRes.Find(','));
+	UploadOption = PageRes.Mid(PageRes.Find(',')+1,PageRes.GetLength()-PageRes.Find(','));
+	if(UploadOption == "-1")
+	{
+		this->UploadOption = -1;
+	}
+	else
+	{
+		this->UploadOption = 0;
+	}
+	if(ServerMD5 != LicenceMd5) //验证失败
+	{
+		return false;
+	}
+	else
+	{
+		return true;
+	}
 }

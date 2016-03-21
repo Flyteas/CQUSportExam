@@ -20,7 +20,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v110</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>NotSet</CharacterSet>
     <UseOfMfc>Dynamic</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -104,6 +104,7 @@
     <ClInclude Include="AnswerSearcher.h" />
     <ClInclude Include="CQUSportExam.h" />
     <ClInclude Include="CQUSportExamDlg.h" />
+    <ClInclude Include="MD5.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -112,6 +113,7 @@
     <ClCompile Include="AnswerSearcher.cpp" />
     <ClCompile Include="CQUSportExam.cpp" />
     <ClCompile Include="CQUSportExamDlg.cpp" />
+    <ClCompile Include="MD5.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

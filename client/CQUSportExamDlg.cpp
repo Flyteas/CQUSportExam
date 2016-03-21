@@ -161,12 +161,20 @@ HCURSOR CCQUSportExamDlg::OnQueryDragIcon()
 void CCQUSportExamDlg::OnBnClickedOk() //搜索按钮
 {
 	// TODO: 在此添加控件通知处理程序代码
-	CString site;
-	CString api;
-	site = "192.168.254.2";
-	api = "search.php?kw=";
+	CString ServerSite;
+	CString AnswerApi;
+	CString CheckVaildApi;
+	CString CheckVaildKey;
+	ServerSite = "cqusport.flyshit.pw";
+	AnswerApi = "getans.php?kw=";
+	CheckVaildApi = "checkvaild.php";
+	CheckVaildKey = "-Flyshit@!@cqusport";
 	UpdateData(true);
-	AnswerSearcher test(api,site);
-	Result_Display =  test.SearchAnswer(Keyword);
+	AnswerSearcher AnswerSeacherObj(AnswerApi,ServerSite);
+	if(!AnswerSeacherObj.CheckVaild(ServerSite,CheckVaildApi,CheckVaildKey))
+	{
+		return;
+	}
+	Result_Display =  AnswerSeacherObj.SearchAnswer(Keyword);
 	UpdateData(false);
 }
